@@ -59,13 +59,21 @@ extern const string fileDirectory = "/tmp/";
 // Using velodyne cloud "ring" channel for image projection (other lidar may have different name for this channel, change "PointXYZIR" below)
 extern const bool useCloudRing = true; // if true, ang_res_y and ang_bottom are not used
 
+// PandarQT
+extern const int N_SCAN = 64;
+extern const int Horizon_SCAN = 600;
+extern const float ang_res_x = 0.6;
+extern const float ang_res_y = (52.133 - (-52.121))/float(N_SCAN-1);
+extern const float ang_bottom = 52.121;
+extern const int groundScanInd = 16;
+
 // VLP-16
-extern const int N_SCAN = 16;
-extern const int Horizon_SCAN = 1800;
-extern const float ang_res_x = 0.2;
-extern const float ang_res_y = 2.0;
-extern const float ang_bottom = 15.0+0.1;
-extern const int groundScanInd = 7;
+//extern const int N_SCAN = 16;
+//extern const int Horizon_SCAN = 1800;
+//extern const float ang_res_x = 0.2;
+//extern const float ang_res_y = 2.0;
+//extern const float ang_bottom = 15.0+0.1;
+//extern const int groundScanInd = 7;
 
 // HDL-32E
 // extern const int N_SCAN = 32;
@@ -153,16 +161,31 @@ struct by_value{
 struct PointXYZIR
 {
     PCL_ADD_POINT4D
-    PCL_ADD_INTENSITY;
+    uint8_t intensity;
+    double timestamp;
     uint16_t ring;
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 } EIGEN_ALIGN16;
 
-POINT_CLOUD_REGISTER_POINT_STRUCT (PointXYZIR,  
-                                   (float, x, x) (float, y, y)
-                                   (float, z, z) (float, intensity, intensity)
-                                   (uint16_t, ring, ring)
+POINT_CLOUD_REGISTER_POINT_STRUCT (PointXYZIR,
+                                    (float, x, x)(float, y, y)
+                                    (float, z, z)(uint8_t, intensity, intensity)
+                                    (double, timestamp, timestamp)(uint16_t, ring, ring)
 )
+
+//struct PointXYZIR
+//{
+//    PCL_ADD_POINT4D
+//    PCL_ADD_INTENSITY;
+//    uint16_t ring;
+//    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+//} EIGEN_ALIGN16;
+//
+//POINT_CLOUD_REGISTER_POINT_STRUCT (PointXYZIR,
+//                                   (float, x, x) (float, y, y)
+//                                   (float, z, z) (float, intensity, intensity)
+//                                   (uint16_t, ring, ring)
+//)
 
 /*
     * A point cloud type that has 6D pose info ([x,y,z,roll,pitch,yaw] intensity is time stamp)
